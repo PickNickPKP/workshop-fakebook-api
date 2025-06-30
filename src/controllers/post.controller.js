@@ -3,7 +3,9 @@ export const getAllPosts = async (req, res, next) => {
 };
 
 export const createPost = async (req, res, next) => {
-  res.json({ message: "Create a new post" });
+  console.log(req.body.message);
+  console.log(req.file);
+  res.json({ message: "Create a new post", file: req.file , body: req.body });
 };
 
 export const updatePost = async (req, res, next) => {
