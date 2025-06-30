@@ -1,14 +1,46 @@
-import prisma from "../config/prisma.config.js";
-import createError from "../utils/create-error.util.js";
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
+import bcrypt from 'bcryptjs'
+import jwt from 'jsonwebtoken'
+import prisma from '../config/prisma.config.js'
+import checkIdentity from '../utils/check-identity.util.js'
+import createError from '../utils/create-error.util.js'
+import { createUser, getUserBy } from '../services/user.service.js'
 
 export async function register(req, res, next) {
-  try {
-    res.json({ msg: "Register controller", body: req.body });
-  } catch (error) {
-    console.log(error);
-  }
+	try {
+		const { identity, firstName, lastName, password, confirmPassword } = req.body
+		//validation
+		if (!(identity.trim() && firstName.trim() && lastName.trim() && password.trim() && confirmPassword.trim())) {
+			createError(400, 'Please fill all data')
+		}
+		if (password !== confirmPassword) {
+			createError(400, 'check confirm password')
+		}
+		// identity เป็น email หรือ mobile phone number : checkIdentity(identity) => String : 'email' | 'mobile'
+		const identityKey = checkIdentity(identity)
+
+		// หา user
+		const foundUser = await prisma.user.findUnique({
+			where: { [identityKey]: identity }
+		})
+		if (foundUser) {
+			createError(409, `Already have this user: ${identity}`)
+		}
+
+		const newUser = {
+			[identityKey]: identity,
+			password: await bcrypt.hash(password, 10),
+			firstName: firstName,
+			lastName: lastName
+		}
+
+		// const result = await prisma.user.create({ data: newUser })
+		res.json({
+			msg: 'Register controller',
+			result: newUser
+		})
+	} catch (err) {
+		next(err)
+	}
 }
 
 export async function registerYup(req, res,next) {
@@ -42,13 +74,13 @@ export async function registerYup(req, res,next) {
 }
 
 export const login = async (req, res, next) => {
-  const {identity, password, email, mobile} = req.body
+	const {identity, password, email, mobile} = req.body
 	const identityKey = email ? 'email' : 'mobile'
 
-	const foundUser = await prisma.user.findUnique({
-		where : {[identityKey]: identity}
-	})
-	// const foundUser = await getUserBy(identityKey, identity)
+	// const foundUser = await prisma.user.findUnique({
+	// 	where : {[identityKey]: identity}
+	// })
+	const foundUser = await getUserBy(identityKey, identity)
 	if(!foundUser) {
 		createError(401, 'Invalid Login')
 	}
@@ -61,6 +93,7 @@ export const login = async (req, res, next) => {
 	const token = jwt.sign(payload, process.env.JWT_SECRET, {
 		algorithm : 'HS256',
 		expiresIn : '15d'
+		// expiresIn : '7s'
 	})
 	const { password : pw, createdAt, updatedAt, ...userData  } = foundUser
 
@@ -72,8 +105,5 @@ export const login = async (req, res, next) => {
 }
 
 export const getMe = async (req, res, next) => {
-  let numUser = await prisma.user.count();
-  console.log(numUser);
-  createError(403, "Block");
-  res.json({ msg: "Get me controller", numUser });
-};
+	res.json({ user: req.user })
+}

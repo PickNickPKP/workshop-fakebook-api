@@ -2,7 +2,7 @@
 
 
 ### env guide
-PORT = 8800  
+PORT = 8899  
 DATABASE_URL=****  
 JWT_SECRET=***
 

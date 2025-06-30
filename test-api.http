@@ -1,8 +1,8 @@
-GET http://localhost:8800/api/auth/me HTTP/1.1
+GET http://localhost:8899/api/auth/me HTTP/1.1
 
 
 ### content-type เว้น 1 บรรทัด
-POST http://localhost:8800/api/post  HTTP/1.1
+POST http://localhost:8899/api/post  HTTP/1.1
 Content-Type: application/json
 
 {
@@ -12,7 +12,7 @@ Content-Type: application/json
 
 
 ###
-POST  http://localhost:8800/api/auth/login HTTP/1.1
+POST  http://localhost:8899/api/auth/login HTTP/1.1
 Content-Type: application/json
 
 {
@@ -22,12 +22,12 @@ Content-Type: application/json
 
 ### Day2
 ## Register Api
-POST http://localhost:8800/api/auth/register HTTP/1.1
+POST http://localhost:8899/api/auth/register HTTP/1.1
 Content-Type: application/json
 
 {
   "identity": "andy@ggg.mail",
-  "mobile": "1234567890",
+  "mobile": "1234567999",
   "firstName": "someone",
   "lastName": "Codecamp",
   "password": "123456",
@@ -36,10 +36,30 @@ Content-Type: application/json
 
 ###
 # Login Api
-POST http://localhost:8800/api/auth/login HTTP/1.1
+POST http://localhost:8899/api/auth/login HTTP/1.1
 Content-Type: application/json
 
 {
-    "identity" : "andy@ggg.mail",
+    "identity" : "bob@ggg.mail",
     "password" : "123456"
 }
+
+###
+
+GET http://localhost:8899/api/auth/me HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTcsImlhdCI6MTc1MTIyMzMyNiwiZXhwIjoxNzUyNTE5MzI2fQ.eDDqu-8VX0ZmZDda78yoSOLWZHMDE0dF-VJX_alD6tg
+
+
+
+###create post
+POST http://localhost:8899/api/post HTTP/1.1
+Content-Type: application/json
+
+{
+ "message" : "Hello, CC20"
+}
+
+### get all posts
+GET  http://localhost:8899/api/post HTTP/1.1
+Content-Type: application/json
+
