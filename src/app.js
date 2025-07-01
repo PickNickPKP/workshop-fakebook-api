@@ -15,7 +15,7 @@ app.use(express.json())
 // app.use(express.urlencoded()) // for parsing application/x-www-form-urlencoded but use multer instead for file uploads
 
 app.use('/api/auth', authRoute)
-app.use('/api/post', authenticate, postRoute)
+app.use('/api/posts', authenticate, postRoute)
 app.use('/api/comment', (req,res)=> res.send('comment service'))
 app.use('/api/like', (req,res)=> res.send('like service'))
 app.use('/api/admin', (req,res)=> res.send('like service'))
